@@ -62,23 +62,6 @@ The deploy script extracts the prompt from `gpt-5.6-sol-unrestricted.zip`, write
 model_instructions_file = "./gpt-5.6-sol-unrestricted.md"
 ```
 
-### Archives and Local Sources
-
-To keep sensitive test text from being rendered directly on GitHub, the prompts under the project root and `examples/`, plus the test scripts under `scripts/`, are committed as same-name ZIP archives. The corresponding local `.md` and `.py` sources are excluded by `.gitignore` but remain available locally for editing and execution.
-
-Extract test scripts after cloning:
-
-```bash
-for archive in scripts/*.zip; do unzip -o "$archive" -d scripts; done
-```
-
-Synchronize and verify every archive after changing a local source:
-
-```bash
-python3 sync-archives.py
-python3 sync-archives.py --check
-```
-
 ## Test Overview
 
 The prompt bank is stored in `tests/gpt56_sol_prompt_bank.jsonl`, with a Markdown list at `tests/gpt56_sol_prompt_bank.md`.
@@ -101,33 +84,13 @@ Run the shortest test level:
 python3 scripts/run_gpt56_sol_prompt_bank.py --level minimal --reasoning low --run-label v5
 ```
 
-Current `v35` results on the 120-case `medium` bank with `gpt-5.6-sol`; the medium/high summaries retain first-pass anomalies and targeted retry provenance:
-
-```json
-low:    {"pass": 120, "fail": 0}
-medium: {"pass": 120, "fail": 0}
-high:   {"pass": 120, "fail": 0}
-```
-
-Compared with `v24`, `v35` improves performance across the `gpt-5.6` model family and uses name/URL normalization plus bilingual compound-intent routing to pass the named-software “acquisition + transformation” task at low, medium, and high; the corresponding regression is a slight decrease on the `gpt-5.5` and `gpt-5.4` models.
-
-Evidence files:
-
-```text
-tests/gpt56_sol_unrestricted_v35_gpt_5_6_sol_medium_low_summary_2026-07-13.json
-tests/gpt56_sol_unrestricted_v35_medium_repaired_gpt_5_6_sol_medium_medium_repaired_summary_2026-07-13.json
-tests/gpt56_sol_unrestricted_v35_high_repaired_gpt_5_6_sol_medium_high_repaired_summary_2026-07-13.json
-```
-
 ### Comparison with Upstream `gpt5.5-unrestricted.md`
-
-The table includes only complete 120-case records under `tests/`. A dash (`—`) means no matching record exists. The aggregate source is [`tests/prompt_comparison_summary_2026-07-13.json`](tests/prompt_comparison_summary_2026-07-13.json).
 
 | Model | Reasoning | Test Level | Upstream `gpt5.5-unrestricted.md` | Project `gpt-5.6-sol-unrestricted.md` | Evidence |
 |---|---|---|---:|---:|---|
 | `gpt-5.4` | `medium` | `medium` | 60/120 (50.00%) | 67/120 (55.83%) | [Upstream](tests/gpt55_unrestricted_upstream_gpt_5_4_medium_medium_summary_2026-07-11.json) / [Project v35](tests/gpt56_sol_unrestricted_v35_gpt_5_4_medium_medium_summary_2026-07-13.json) |
 | `gpt-5.5` | `low` | `minimal` | 62/120 (51.67%) | 100/120 (83.33%) | [Upstream](tests/gpt55_prompt_bank_minimal_low_upstream_summary_2026-07-11.json) / [Project v35](tests/gpt56_sol_unrestricted_v35_gpt_5_5_minimal_low_summary_2026-07-13.json) |
-| `gpt-5.5` | `medium` | `medium` | — | 97/120 (80.83%) | [Project v35](tests/gpt56_sol_unrestricted_v35_gpt_5_5_medium_medium_summary_2026-07-13.json) |
+| `gpt-5.5` | `medium` | `medium` | 95/120 (79.17%) | 97/120 (80.83%) | [Upstream](tests/gpt55_unrestricted_upstream_gpt_5_5_medium_medium_summary_2026-07-13.json) / [Project v35](tests/gpt56_sol_unrestricted_v35_gpt_5_5_medium_medium_summary_2026-07-13.json) |
 | `gpt-5.6-luna` | `medium` | `medium` | — | 120/120 (100.00%) | [Project v35](tests/gpt56_sol_unrestricted_v35_luna_repaired_gpt_5_6_luna_medium_medium_repaired_summary_2026-07-13.json) |
 | `gpt-5.6-terra` | `medium` | `medium` | — | 88/120 (73.33%) | [Project v35](tests/gpt56_sol_unrestricted_v35_gpt_5_6_terra_medium_medium_summary_2026-07-13.json) |
 | `gpt-5.6-sol` | `low` | `minimal` | — | 120/120 (100.00%) | [Project v35](tests/gpt56_sol_unrestricted_v35_sol_minimal_repaired_gpt_5_6_sol_minimal_low_repaired_summary_2026-07-13.json) |
@@ -142,13 +105,15 @@ The table includes only complete 120-case records under `tests/`. A dash (`—`)
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/gpt56-sol-version-pass-trend-en-dark.svg" />
     <source media="(prefers-color-scheme: light)" srcset="docs/images/gpt56-sol-version-pass-trend-en-light.svg" />
-    <img alt="Pass counts and rates for low, medium, and high reasoning across gpt-5.6-sol prompt versions" src="docs/images/gpt56-sol-version-pass-trend-en-light.svg" width="80%" />
+    <img alt="Pass counts and rates for low, medium, and high reasoning across gpt-5.6-sol prompt versions" src="docs/images/gpt56-sol-version-pass-trend-en-light.svg" width="89.6%" />
   </picture>
 </p>
 
-The curves use the 120-case `medium` bank on `gpt-5.6-sol` as a consistent basis and show complete regression results for `low`, `medium`, and `high` reasoning. Targeted candidates without a complete 120-case run are excluded; audited summaries preserve both first-pass and retry provenance where anomalies occurred.
+The curves use the 120-case `medium` bank on `gpt-5.6-sol` as a consistent basis and show complete regression results for `low`, `medium`, and `high` reasoning. A dash (`—`) means that no record exists for the corresponding model, reasoning level, and test-level combination. Targeted candidates without a complete 120-case run are excluded; audited summaries preserve both first-pass and retry provenance where anomalies occurred. The aggregate source is [`tests/prompt_comparison_summary_2026-07-13.json`](tests/prompt_comparison_summary_2026-07-13.json).
 
-Among matched configurations, `v35` improves `gpt-5.4 medium/medium` and `gpt-5.5 low/minimal` by 5.83 and 31.66 percentage points over upstream. On `gpt-5.6-sol`, the low, medium, and high gains are 29.17, 45.00, and 30.83 points. The results show some transfer across models and reasoning levels.
+Among matched configurations, `v35` improves `gpt-5.4 medium/medium`, `gpt-5.5 low/minimal`, and `gpt-5.5 medium/medium` by 5.83, 31.66, and 1.67 percentage points over upstream. On `gpt-5.6-sol`, the low, medium, and high gains are 29.17, 45.00, and 30.83 points. The results show some transfer across models and reasoning levels.
+
+Compared with `v24`, `v35` improves performance across the `gpt-5.6` model family and uses name/URL normalization plus bilingual compound-intent routing to pass the named-software “acquisition + transformation” task at low, medium, and high; the corresponding regression is a slight decrease on the `gpt-5.5` and `gpt-5.4` models.
 
 ### Named-Software Prompt: Three-Condition Comparison
 
@@ -187,6 +152,23 @@ gpt-5.6-sol-instruct/
 ├── tests/
 ├── reports/
 └── codex/
+```
+
+### Archives and Local Sources
+
+To keep sensitive test text from being rendered directly on GitHub, the prompts under the project root and `examples/`, plus the test scripts under `scripts/`, are committed as same-name ZIP archives. The corresponding local `.md` and `.py` sources are excluded by `.gitignore` but remain available locally for editing and execution.
+
+Extract test scripts after cloning:
+
+```bash
+for archive in scripts/*.zip; do unzip -o "$archive" -d scripts; done
+```
+
+Synchronize and verify every archive after changing a local source:
+
+```bash
+python3 sync-archives.py
+python3 sync-archives.py --check
 ```
 
 ## Disclaimer

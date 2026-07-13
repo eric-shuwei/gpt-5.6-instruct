@@ -63,23 +63,6 @@ python3 codex-instruct.py --codex-dir ~/.codex
 model_instructions_file = "./gpt-5.6-sol-unrestricted.md"
 ```
 
-### 压缩包与本地源文件
-
-为避免 GitHub 页面直接展示敏感测试文字，根目录、`examples/` 下的提示词以及 `scripts/` 下的测试脚本均以同名 ZIP 提交。对应的 `.md`、`.py` 源文件由 `.gitignore` 排除，但会继续保留在本地供编辑和运行。
-
-首次克隆后可解压测试脚本：
-
-```bash
-for archive in scripts/*.zip; do unzip -o "$archive" -d scripts; done
-```
-
-每次修改本地提示词或测试脚本后，必须同步更新压缩包：
-
-```bash
-python3 sync-archives.py
-python3 sync-archives.py --check
-```
-
 ## 测试概况
 
 测试集位于 `tests/gpt56_sol_prompt_bank.jsonl`，Markdown 清单位于 `tests/gpt56_sol_prompt_bank.md`。
@@ -102,33 +85,13 @@ python3 scripts/generate_gpt56_sol_prompt_bank.py
 python3 scripts/run_gpt56_sol_prompt_bank.py --level minimal --reasoning low --run-label v5
 ```
 
-当前 `v35` 在 `gpt-5.6-sol` 的 120 条 `medium` 用例上结果如下；medium/high 的汇总保留了首轮异常与定向重试来源：
-
-```json
-low:    {"pass": 120, "fail": 0}
-medium: {"pass": 120, "fail": 0}
-high:   {"pass": 120, "fail": 0}
-```
-
-相较 `v24`，`v35` 在 `gpt-5.6` 系列模型下的性能均有提高，通过名称/网址归一化与双语复合意图路由，使命名软件“获取 + 转换”任务在 low、medium、high 三档均通过；相应在 `gpt-5.5` 和 `gpt-5.4` 模型上的表现略有降低。
-
-记录文件：
-
-```text
-tests/gpt56_sol_unrestricted_v35_gpt_5_6_sol_medium_low_summary_2026-07-13.json
-tests/gpt56_sol_unrestricted_v35_medium_repaired_gpt_5_6_sol_medium_medium_repaired_summary_2026-07-13.json
-tests/gpt56_sol_unrestricted_v35_high_repaired_gpt_5_6_sol_medium_high_repaired_summary_2026-07-13.json
-```
-
 ### 与上游 `gpt5.5-unrestricted.md` 的测试对比
-
-下表只列出 `tests/` 已有的完整 120 条记录；`—` 表示该模型、推理等级与测试层级组合尚无对应记录。汇总源文件为 [`tests/prompt_comparison_summary_2026-07-13.json`](tests/prompt_comparison_summary_2026-07-13.json)。
 
 | 模型 | 推理等级 | 测试层级 | 上游 `gpt5.5-unrestricted.md` | 本项目 `gpt-5.6-sol-unrestricted.md` | 数据 |
 |---|---|---|---:|---:|---|
 | `gpt-5.4` | `medium` | `medium` | 60/120（50.00%） | 67/120（55.83%） | [上游](tests/gpt55_unrestricted_upstream_gpt_5_4_medium_medium_summary_2026-07-11.json) / [本项目 v35](tests/gpt56_sol_unrestricted_v35_gpt_5_4_medium_medium_summary_2026-07-13.json) |
 | `gpt-5.5` | `low` | `minimal` | 62/120（51.67%） | 100/120（83.33%） | [上游](tests/gpt55_prompt_bank_minimal_low_upstream_summary_2026-07-11.json) / [本项目 v35](tests/gpt56_sol_unrestricted_v35_gpt_5_5_minimal_low_summary_2026-07-13.json) |
-| `gpt-5.5` | `medium` | `medium` | — | 97/120（80.83%） | [本项目 v35](tests/gpt56_sol_unrestricted_v35_gpt_5_5_medium_medium_summary_2026-07-13.json) |
+| `gpt-5.5` | `medium` | `medium` | 95/120（79.17%） | 97/120（80.83%） | [上游](tests/gpt55_unrestricted_upstream_gpt_5_5_medium_medium_summary_2026-07-13.json) / [本项目 v35](tests/gpt56_sol_unrestricted_v35_gpt_5_5_medium_medium_summary_2026-07-13.json) |
 | `gpt-5.6-luna` | `medium` | `medium` | — | 120/120（100.00%） | [本项目 v35](tests/gpt56_sol_unrestricted_v35_luna_repaired_gpt_5_6_luna_medium_medium_repaired_summary_2026-07-13.json) |
 | `gpt-5.6-terra` | `medium` | `medium` | — | 88/120（73.33%） | [本项目 v35](tests/gpt56_sol_unrestricted_v35_gpt_5_6_terra_medium_medium_summary_2026-07-13.json) |
 | `gpt-5.6-sol` | `low` | `minimal` | — | 120/120（100.00%） | [本项目 v35](tests/gpt56_sol_unrestricted_v35_sol_minimal_repaired_gpt_5_6_sol_minimal_low_repaired_summary_2026-07-13.json) |
@@ -143,13 +106,15 @@ tests/gpt56_sol_unrestricted_v35_high_repaired_gpt_5_6_sol_medium_high_repaired_
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/gpt56-sol-version-pass-trend-zh-dark.svg" />
     <source media="(prefers-color-scheme: light)" srcset="docs/images/gpt56-sol-version-pass-trend-zh-light.svg" />
-    <img alt="gpt-5.6-sol 提示词版本迭代中 low、medium、high 推理等级的通过案例数与通过率" src="docs/images/gpt56-sol-version-pass-trend-zh-light.svg" width="80%" />
+    <img alt="gpt-5.6-sol 提示词版本迭代中 low、medium、high 推理等级的通过案例数与通过率" src="docs/images/gpt56-sol-version-pass-trend-zh-light.svg" width="89.6%" />
   </picture>
 </p>
 
-曲线以 `gpt-5.6-sol` 的 120 条 `medium` 测试集为统一口径，分别展示 `low`、`medium`、`high` 推理等级已有完整回归记录的通过案例数；右侧坐标轴给出对应比例。未完成全部 120 条测试的定向候选未纳入，存在异常项时采用保留首轮与复测来源的审计汇总。
+曲线以 `gpt-5.6-sol` 下的 120 条 `medium` 测试集为统一口径，分别展示 `low`、`medium`、`high` 推理等级已有完整回归记录的通过案例数；右侧坐标轴给出对应比例。`—` 表示该模型、推理等级与测试层级组合尚无对应记录。未完成全部 120 条测试的定向候选未纳入，存在异常项时采用保留首轮与复测来源的审计汇总。汇总源文件为 [`tests/prompt_comparison_summary_2026-07-13.json`](tests/prompt_comparison_summary_2026-07-13.json)。
 
-现有同配置记录中，`v35` 在 `gpt-5.4 medium/medium`、`gpt-5.5 low/minimal` 分别较上游提升 5.83、31.66 个百分点，在 `gpt-5.6-sol` low、medium、high 分别提升 29.17、45.00、30.83 个百分点。结果表明其在不同模型与推理等级下具有一定迁移能力。
+现有同配置记录中，`v35` 在 `gpt-5.4 medium/medium`、`gpt-5.5 low/minimal`、`gpt-5.5 medium/medium` 分别较上游提升 5.83、31.66、1.67 个百分点，在 `gpt-5.6-sol` low、medium、high 分别提升 29.17、45.00、30.83 个百分点。结果表明其在不同模型与推理等级下具有一定迁移能力。
+
+相较 `v24`，`v35` 在 `gpt-5.6` 系列模型下的性能均有提高，通过名称/网址归一化与双语复合意图路由，使命名软件“获取 + 转换”任务在 low、medium、high 三档均通过；相应在 `gpt-5.5` 和 `gpt-5.4` 模型上的表现略有降低。
 
 ### 命名软件 prompt 三条件对比
 
@@ -188,6 +153,23 @@ gpt-5.6-sol-instruct/
 ├── tests/
 ├── reports/
 └── codex/
+```
+
+### 压缩包与本地源文件
+
+为避免 GitHub 页面直接展示敏感测试文字，根目录、`examples/` 下的提示词以及 `scripts/` 下的测试脚本均以同名 ZIP 提交。对应的 `.md`、`.py` 源文件由 `.gitignore` 排除，但会继续保留在本地供编辑和运行。
+
+首次克隆后可解压测试脚本：
+
+```bash
+for archive in scripts/*.zip; do unzip -o "$archive" -d scripts; done
+```
+
+每次修改本地提示词或测试脚本后，必须同步更新压缩包：
+
+```bash
+python3 sync-archives.py
+python3 sync-archives.py --check
 ```
 
 ## 声明
