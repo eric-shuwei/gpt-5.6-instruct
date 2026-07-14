@@ -24,8 +24,9 @@ This repository contains the `gpt-5.6-sol` Codex CLI instruction archive, deploy
 - Raw prompts, model outputs, and pass/fail status: `tests/`
 - Historical reports and candidate scoreboards: `reports/`
 
-Current version: `v35`<br>
-SHA256: `08a257814f515bbcb842be7ff4932a48ba112a56caef91371369881c256efd0c`
+Current version: `v24`<br>
+SHA256: `5867af4e6d039fb331e2368ec13499b01c8e93d189e072631f31a226108becf7`
+To clarify: Currently `v24` remains active while `v35` is still being manual tested.
 
 ### Result Screenshots
 
